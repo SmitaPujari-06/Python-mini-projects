@@ -1,31 +1,63 @@
 def show_menu():
-    print('1.Add expense')
-    print('2.Show expenses')
-    print('3.Exit')
+    print('\n1. Add expense')
+    print('2. Show expenses')
+    print('3. Exit')
+
+
+FILE_NAME = 'total_expenses.txt'
 
 while True:
     show_menu()
+    choice = input('Choose an option (1-3): ').strip()
 
-    choice = input('Choose an option (1-3):').strip()
-
+    # 🔹 ADD EXPENSE
     if choice == '1':
-        date = input('Enter the date (DD/MM/YY): ')
-        catagory = input('Enter the category (groceries, transportation,  etc.,): ')
-        amount = input('Enter the amount of money spent: ')
+        date = input('Enter the date (DD/MM/YYYY): ').strip()
+        category = input('Enter the category (groceries, transportation, etc.): ').strip()
+        amount = input('Enter the amount of money spent: ').strip()
 
-        expenses = f'{date},{catagory},{amount}'
-        with open('total_expenses.txt','a') as e:
-            e.write(expenses)
+        expense = f"{date},{category},{amount}"
 
-        print('Expense added!')
+        with open(FILE_NAME, 'a') as f:
+            f.write(expense + '\n')
 
-    elif choice =='2':
-        with open('total_expenses.txt','a') as e:
-            content = e.read()
-            print(content)
+        print('✅ Expense added!')
 
+    # 🔹 SHOW EXPENSES
+    elif choice == '2':
+        try:
+            with open(FILE_NAME, 'r') as f:
+                print(f"\n{'Date':<15}{'Category':<15}{'Amount':<10}")
+                print('-' * 40)
+
+                empty = True
+
+                for line in f:
+                    line = line.strip()
+
+                    if not line:
+                        continue
+
+                    parts = line.split(',')
+
+                    if len(parts) != 3:
+                        print(f"⚠ Skipping corrupted line: {line}")
+                        continue
+
+                    date, category, amount = parts
+                    print(f"{date:<15}{category:<15}₹{amount:<10}")
+                    empty = False
+
+                if empty:
+                    print("No expenses recorded yet.")
+
+        except FileNotFoundError:
+            print("No expenses recorded yet.")
+
+    # 🔹 EXIT
     elif choice == '3':
-        print('Bye byee!')
+        print('Bye bye!')
         break
+
     else:
-        print('Invalid choice')
+        print('Invalid choice, please try again.')
